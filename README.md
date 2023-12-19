@@ -12,47 +12,82 @@ o objetivo deste trabalho é simular um robô acompanhante de hospital. A terefa
 
 ## Procedimentos para a instalação do pacote
 
-* No terminal, abra a area de trabalho ROS (ros2_ws), e em seguida o diretório src:
+* No terminal, abra a pasta $HOME
 ```
-cd ~/ros2_ws/src
+cd ~/
 ```
-* Faça o clone do pacote do GitHub:
+* Clone este repositório
 ```
-git clone https://github.com/viniciusbaltoe/ros_alvw_caregiver.git
+git clone https://github.com/LaazV/ros2_ws.git
 ```
 
-NÃO ESTÁ FUNCIONANDO DIREITO:
+- Baixe o arquivo `yolo_detector.zip`, e extraia na pasta ros2_ws
+
 ```
-cd ros_alvw_caregiver
-chmod +x setup.sh
-./setup.sh
-export GAZEBO_MODEL_PATH=`pwd`/models:`pwd`/fuel_models
-cd ..
+https://drive.google.com/file/d/1WOc4_xbdNo7XR8pc3GYMumKJ3j6VDPEN/view?usp=sharing
 ```
-* Faça o clone do pacote de exploração utilizado.
+
+- A estrutura do projeto deverá ficar:
+
 ```
-git clone https://github.com/robo-friends/m-explore-ros2.git
+- ros2_ws/
+-- src/
+-- yolo_detector/
+-- start
+-- README.md
 ```
-* Retorne ao diretório do WorkSpace (ros2_ws) e faça a atualização do colcon:
+
+- Certifique-se que o arquivo `start` seja executável
+
 ```
-cd ~/ros2_ws && colcon build && source install/setup.bash
+chmod +x start
+```
+
+Instale o pacote `tf-transformations` no ubuntu
+
+```
+sudo apt update && sudo apt install ros-humble-tf-transformations 
+```
+
+- E o pacote `transforms3d` do python
+
+```
+pip install transforms3d
 ```
 
 ## Tutoriais de utilização do pacote
 
-* Configuração inicial necessária para rodar o experimento:
-```
-source /opt/ros/humble/setup.bash
-export TURTLEBOT3_MODEL=waffle
-export GAZEBO_MODEL_PATH=$GAZEBO_MODEL_PATH:/opt/ros/humble/share/turtlebot3_gazebo/models
-```
-* Launch do Ambiente Gazebo:
-```
-ros2 launch ros_alvw_caregiver hospital_launch.py headless:=False slam=True
-```
-Este launch é responsável por abrir o ambiente de simulação do hospital no Gazebo e acrescentar o robô nas coordenadas (x = 0.0, y = 0.0).
+Para rodar o pacote, será necessário 4 terminais. 
 
-* Launch da tarefa:
+Abra 4 terminais. Em cada terminal, entre no workspace do ros, e execute o script `start` 
+
 ```
-ros2 launch ros_alvw_caregiver caregiver_launch.py
+cd $HOME/ros2_ws 
+./start
+```
+
+No primeiro terminal, inicie o gazebo digitando:
+
+```
+term1
+```
+
+Aguarde o gazebo iniciar, e depois aguarde mais alguns segundos para o robô se orientar.
+
+Em seguida, no segundo terminal, inicie a navegação autonoma digitando:
+
+```
+term2
+```
+
+No terceiro terminal, inicie os procedimentos de navegação ao detectar um humano com o comando
+
+```
+term3
+```
+
+E no quarto terminal, inicie a detecção com o comando
+
+```
+yolo
 ```
