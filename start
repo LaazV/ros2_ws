@@ -1,0 +1,60 @@
+#!/bin/bash -
+# shellcheck disable=SC2059
+
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NO_COL='\033[0m'
+
+#  Verifica se o terminal já está configurado para o ROS2
+#+ Se estiver, termina o script.
+if [[ "$PS1" =~ "ros" ]]; then
+	printf "start: ${RED}\tAmbiente já está configurado para rodar o ROS.${NO_COL}\n"
+	printf "\tCaso esteja com problemas, inicie outro shell\n"
+	printf "\te execute ${RED}'source start'${NO_COL} no workspace do ROS.\n\n"
+  return
+fi
+
+printf "start:\tIniciando ambiente para o ROS2\n"
+# Workspace do ROS2
+ROS_WS=~/ros2_ws
+
+#  O Workspace do ROS está em outro diretório? Atualiza o ROS_WS com
+#+ a variável de ambiente $ROS_PATH
+if [[ -n "${ROS_PATH}" ]]; then
+	printf "\tROS_PATH modificado para ${ROS_PATH}\n"
+	ROS_WS=$ROS_PATH
+else
+	printf "\t\e[4mROS_PATH padrão: ${ROS_WS}\e[0m\n"
+fi
+
+
+## Ativa o ambiente do ROS
+source /opt/ros/humble/setup.bash
+
+## Configura o ambiente do Gazebo
+source /usr/share/gazebo/setup.bash
+
+# Para o Trabalho 2
+export TURTLEBOT3_MODEL=waffle_pi
+
+
+# Modelos para importação pelo Gazebo
+gazebo_path1="$ROS_WS"/src/ros_alvw_caregiver-master/fuel_models/
+gazebo_path2="$ROS_WS"/src/ros_alvw_caregiver-master/models/
+gazebo_path3="/opt/ros/humble/share/turtlebot3_gazebo/models"
+
+export GAZEBO_MODEL_PATH=$gazebo_path1:$gazebo_path2:$gazebo_path3
+
+# Diferencia o terminal com ROS2 ativo
+PS1="[ros2]"$PS1
+
+alias sourceoverlay='cd ${ROS_WS}; source ${ROS_WS}/install/setup.bash'
+alias term1='cd ${ROS_WS};source ${ROS_WS}/install/setup.bash;ros2 launch ros_alvw_caregiver caregiver_launch.py'
+alias term2='cd ${ROS_WS};source ${ROS_WS}/install/setup.bash;ros2 launch explore_lite explore.launch.py'
+alias term3='cd ${ROS_WS};source ${ROS_WS}/install/setup.bash;ros2 run ros_alvw_caregiver find_human'
+alias yolo='cd ${ROS_WS};source ${ROS_WS}/install/setup.bash;cd yolo_detector;python3 ImageReader.py'
+# Build com link simbólico
+alias colconsim='colcon build --symlink-install'
+
+# Tudo configurado
+printf "${GREEN}Ambiente para o ROS2 ativo.${NO_COL}\n\n"
